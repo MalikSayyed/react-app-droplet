@@ -1,41 +1,36 @@
-name: Deploy React App to DigitalOcean
+name: Deploy React App
 
 on:
   push:
     branches:
-      - main  # Trigger deployment when pushing to the main branch
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 18
 
-    # Step 3: Install dependencies and build
     - name: Install dependencies and build
       run: |
         npm install
         npm run build
 
-    # Step 4: Deploy to DigitalOcean
-    - name: Deploy to DigitalOcean
-      uses: appleboy/ssh-action@v0.1.6
+    - name: Deploy to Droplet
+      uses: appleboy/ssh-action@v0.1.5
       with:
-        host: ${{ secrets.DROPLET_IP }}
-        username: ${{ secrets.DROPLET_USER }}
-        key: ${{ secrets.SSH_KEY }}
+        host: 134.209.157.190
+        username: root
         key: ${{ secrets.DROPLET_SSH_KEY }}
         script: |
           rm -rf /var/www/react-app/*
           mkdir -p /var/www/react-app
-          scp -r build/* /var/www/react-app/
-          sudo systemctl reload nginx
+          scp -r ./build/* root@:/var/www/react-app/
+          sudo systemctl restart nginx
