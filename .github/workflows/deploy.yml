@@ -25,6 +25,7 @@ jobs:
 
     - name: Add Host to Known Hosts
       run: |
+        mkdir -p ~/.ssh
         ssh-keyscan -H 134.209.157.190 >> ~/.ssh/known_hosts
 
     - name: Deploy to Droplet
