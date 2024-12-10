@@ -23,6 +23,10 @@ jobs:
         npm install
         npm run build
 
+    - name: Add Host to Known Hosts
+      run: |
+        ssh-keyscan -H 134.209.157.190 >> ~/.ssh/known_hosts
+
     - name: Deploy to Droplet
       env:
         SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
