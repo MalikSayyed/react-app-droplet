@@ -32,5 +32,5 @@ jobs:
         script: |
           rm -rf /var/www/react-app/*
           mkdir -p /var/www/react-app
-          scp -r ./build/* root@:/var/www/react-app/
+          scp -r ./build/* root@134.209.157.190:/var/www/react-app/
           sudo systemctl restart nginx
