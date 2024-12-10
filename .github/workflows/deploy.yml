@@ -24,13 +24,18 @@ jobs:
         npm run build
 
     - name: Deploy to Droplet
-      uses: appleboy/ssh-action@v0.1.5
-      with:
-        host: 134.209.157.190
-        username: root
-        key: ${{ secrets.DROPLET_SSH_KEY }}
-        script: |
-          rm -rf /var/www/react-app/*
-          mkdir -p /var/www/react-app
-          scp -r ./build/* root@134.209.157.190:/var/www/react-app/
-          sudo systemctl restart nginx
+      env:
+        SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+      run: |
+        # Create a temporary SSH key file
+        echo "$SSH_KEY" > temp_key
+        chmod 600 temp_key
+
+        # Copy the build files to the server
+        scp -i temp_key -r ./build/* root@134.209.157.190:/var/www/react-app/
+
+        # Restart Nginx on the server
+        ssh -i temp_key root@134.209.157.190 "sudo systemctl restart nginx"
+
+        # Clean up
+        rm temp_key
